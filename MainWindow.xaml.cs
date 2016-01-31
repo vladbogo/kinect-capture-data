@@ -83,7 +83,7 @@ namespace Microsoft.Samples.Kinect.SkeletonBasics
 
         private bool captureData;
 
-        private StreamWriter file;
+        private StreamWriter fileScreen, fileReal;
 
         /// <summary>
         /// Initializes a new instance of the MainWindow class.
@@ -229,7 +229,8 @@ namespace Microsoft.Samples.Kinect.SkeletonBasics
                             foreach (Joint j in skeleton.Joints)
                             {
                                 DepthImagePoint p = this.sensor.CoordinateMapper.MapSkeletonPointToDepthPoint(j.Position, DepthImageFormat.Resolution640x480Fps30);
-                                file.WriteLine(p.X + " " + p.Y + " " + p.Depth + " 1");
+                                fileScreen.WriteLine(p.X + " " + p.Y + " " + p.Depth + " 1");
+                                fileReal.WriteLine(j.Position.X + " " + j.Position.Y + " " + j.Position.Z + " 1");
                             }
                         }
                     }
@@ -401,14 +402,16 @@ namespace Microsoft.Samples.Kinect.SkeletonBasics
             {
                 if (this.checkBoxCaptureData.IsChecked.GetValueOrDefault())
                 {
-                    
-                    this.file = new StreamWriter(System.Diagnostics.Stopwatch.GetTimestamp() + "_captured.txt");
+                    long time = System.Diagnostics.Stopwatch.GetTimestamp();
+                    this.fileScreen = new StreamWriter(time + "_captured_screen.txt");
+                    this.fileReal = new StreamWriter(time + "_captured_real.txt");
                     this.captureData = true;
                 }
                 else
                 {
                     this.captureData = false;
-                    file.Close();
+                    fileScreen.Close();
+                    fileReal.Close();
                 }
             }
         }
